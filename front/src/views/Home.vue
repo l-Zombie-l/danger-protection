@@ -24,34 +24,34 @@ import {
 export default class Home extends Vue {
 
     mounted() {
-        let colors = ["#ff0000", "#1cff01"];
+        let colors = ["#ff0000", "#1cff01"]; //цвет мячей
 
         let Ball = function () {
             this.x = Math.floor(Math.random() * (474 - 26 + 1)) + 26;
             this.y = Math.floor(Math.random() * (374 - 26 + 1)) + 26;
             this.xSpeed = -2;
             this.ySpeed = 3;
-        };
+        }; //границы появления и скорость движения
 
-        let circle = function (x, y, radius, fillCircle, i) {
+        let ballDesign = function (x, y, radius, fillBallDesign, i) {
             ctx.beginPath();
             ctx.arc(x, y, 25, 0, Math.PI * 2, true);
-            if (fillCircle) {
+            if (fillBallDesign) {
                 ctx.fillStyle = colors[i];
                 ctx.fill();
             } else {
                 ctx.stroke();
             }
-        };
+        }; //дизайн мяча
 
         Ball.prototype.draw = function (i) {
-            circle(this.x, this.y, 3, true, i);
-        };
+            ballDesign(this.x, this.y, 3, true, i);
+        }; //отрисовка
 
         Ball.prototype.move = function () {
             this.x += this.xSpeed;
             this.y += this.ySpeed;
-        };
+        }; //движение
 
         Ball.prototype.checkCollision = function () {
             if (this.x < 25 || this.x > width - 25) {
@@ -60,33 +60,34 @@ export default class Home extends Vue {
             if (this.y < 25 || this.y > height - 25) {
                 this.ySpeed = -this.ySpeed;
             }
-        };
+        }; //столкновение с границами
 
-        let canvas = document.getElementById("canvas");
-        let ctx = canvas.getContext("2d");
-        let width = canvas.width;
-        let height = canvas.height;
-        let ballsCount = 2;
-        let balls = [];
+        let canvas = document.getElementById("canvas"); //возвращает ссылку на элемент по его идентификатору
+        let ctx = canvas.getContext("2d"); //двухмерная среда рисования
+        let width = canvas.width; //ширина
+        let height = canvas.height; //высота
+        let ballsCount = 2; //количество мячей
+        let balls = []; //массив мячей
 
         for (let i = 0; i < ballsCount; i++) {
             let ball = new Ball()
             balls.push(ball);
         }
+
         setInterval(function () {
             ctx.clearRect(0, 0, width, height);
-            for (let i = 0; i < 2; ++i) {
+            for (let i = 0; i < ballsCount; ++i) {
                 balls[i].draw(i);
                 balls[i].move();
                 balls[i].checkCollision();
             }
             ctx.strokeRect(0, 0, width, height);
-        }, 30);
+        }, 30); // вызывает функцию регулярно, повторяя вызов через определённый интервал времени (отрисовка, движение, столкновение)
 
-        let getpixelcolour = e => {
-            let x = e.offsetX || e.originalEvent.layerX || e.layerX,
-                y = e.offsetY || e.originalEvent.layerY || e.layerY,
-                pixel = ctx.getImageData(x, y, 1, 1);
+        let getPixelColour = e => {
+            let x = e.offsetX || e.originalEvent.layerX || e.layerX;
+            let y = e.offsetY || e.originalEvent.layerY || e.layerY;
+            let pixel = ctx.getImageData(x, y, 1, 1);
 
             if (pixel.data != "0,0,0,0") {
                 if (pixel.data == '255,0,0,255') {
@@ -98,12 +99,12 @@ export default class Home extends Vue {
                 return;
             }
         }
-        canvas.addEventListener('click', getpixelcolour);
-    };
+        canvas.addEventListener('click', getPixelColour);
+    }; //получение цвета пикселя по клику и запись в логи результата
+
     data_time() {
         var date = new Date().toLocaleString();
         return date;
-    }
-
+    } // дата и время
 }
 </script>
